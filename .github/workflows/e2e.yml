@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       app_tag:
-        description: Release tag of the app in thiagonunes11/tr-playground-native
+        description: Release tag of the app in thiagonunes11/tr-playground-native (empty = latest release)
         required: false
 
 env:
   APP_REPO: thiagonunes11/tr-playground-native
-  APP_TAG: ${{ inputs.app_tag || '0.7.6' }}
+  APP_TAG: ${{ inputs.app_tag }}
   MAESTRO_VERSION: 2.10.0
 
 jobs:
@@ -39,7 +39,10 @@ jobs:
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
       - name: Download app
-        run: gh release download "$APP_TAG" -R "$APP_REPO" --pattern '*.apk' --output app.apk
+        run: |
+          tag="${APP_TAG:-$(gh release view -R "$APP_REPO" --json tagName --jq .tagName)}"
+          echo "Testing app release \`$tag\` from $APP_REPO" >> "$GITHUB_STEP_SUMMARY"
+          gh release download "$tag" -R "$APP_REPO" --pattern '*.apk' --output app.apk
         env:
           GH_TOKEN: ${{ github.token }}
 
