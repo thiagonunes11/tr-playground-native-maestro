@@ -1,0 +1,12 @@
+appId: com.thiagonunes11.trplayground
+---
+- setLocation:
+    latitude: -23.55139
+    longitude: -46.63448
+- launchApp:
+    clearState: true
+    permissions:
+      location: allow
+- tapOn: "Geo Location"
+- tapOn: "Get current location"
+- assertVisible: ".*São Paulo.*"

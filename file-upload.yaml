@@ -1,0 +1,29 @@
+appId: com.thiagonunes11.trplayground
+# prerequisite: adb push assets/test.mp4 /sdcard/Download/
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element: "File Upload"
+- tapOn: "File Upload"
+
+- tapOn: "Browse for a file to upload"
+# picker shortcut, same on every device, instead of the device-specific storage name
+- tapOn: "Show roots"
+# id limits the match to the side menu item; the picker remembers the last folder, so the top title may also be "Downloads"
+- tapOn:
+    text: "Downloads"
+    id: "android:id/title"
+- tapOn: "test.mp4"
+
+- extendedWaitUntil:
+    visible: "Upload Complete"
+    timeout: 30000
+- tapOn: "OK"
+
+- assertVisible:
+    id: "uploaded-file-name-0"
+    text: "test.mp4"
+- assertVisible:
+    id: "uploaded-file-meta-0"
+    text: "1.7 MB • video/mp4"

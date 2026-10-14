@@ -1,0 +1,12 @@
+# app build: 126 MB, above GitHub's 100 MB per-file limit
+*.apk
+*.aab
+
+# Maestro reports (--format junit|html --output)
+report*.xml
+report*.html
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

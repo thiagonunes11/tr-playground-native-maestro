@@ -1,0 +1,25 @@
+appId: com.thiagonunes11.trplayground
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element: "Date Picker"
+    centerElement: true
+- tapOn: "Date Picker"
+- tapOn: "Select Date"
+
+
+#  dynamic date (+92 days)
+- runScript:
+    file: scripts/target-date.js
+    env:
+      DAYS: "92"
+- repeat:
+    times: 24
+    while:
+      notVisible: ${output.target}
+    commands:
+      - tapOn: "Next month"
+- tapOn: ${output.target}
+- tapOn: "OK"
+- assertVisible: ${output.expected}

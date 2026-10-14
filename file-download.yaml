@@ -1,0 +1,63 @@
+appId: com.thiagonunes11.trplayground
+# cleanup runs even if the flow fails; a leftover file makes the app save "name (1).ext"
+onFlowComplete:
+  - runFlow: subflows/delete-downloads.yaml
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element: "File Download"
+    centerElement: true
+- tapOn: "File Download"
+
+# folder picker (OPEN_DOCUMENT_TREE) — storage root is blocked on Android 11+
+- tapOn: "Documents"
+- tapOn: "USE THIS FOLDER"
+- tapOn: "ALLOW"
+
+- tapOn: "Download Sample PDF Document"
+- extendedWaitUntil:
+    visible: "Download Complete"
+    timeout: 15000
+- assertVisible: "Sample PDF Document has been downloaded.*"
+- tapOn: "OK"
+
+- tapOn: "Download Sample Text File"
+- extendedWaitUntil:
+    visible: "Download Complete"
+    timeout: 15000
+- assertVisible: "Sample Text File has been downloaded.*"
+- tapOn: "OK"
+
+- scrollUntilVisible:
+    element: "Download Sample JSON Data"
+    centerElement: true
+- tapOn: "Download Sample JSON Data"
+- extendedWaitUntil:
+    visible: "Download Complete"
+    timeout: 15000
+- assertVisible: "Sample JSON Data has been downloaded.*"
+- tapOn: "OK"
+
+# destination (picked folder, not the app's private storage) and size of each file
+- runFlow:
+    file: subflows/verify-download.yaml
+    env:
+      NAME: "Sample PDF Document"
+      FILE_ID: "1"
+      FILE: "sample-document\\.pdf"
+      SIZE: "30.9 KB"
+- runFlow:
+    file: subflows/verify-download.yaml
+    env:
+      NAME: "Sample Text File"
+      FILE_ID: "2"
+      FILE: "sample-text\\.txt"
+      SIZE: "413 B"
+- runFlow:
+    file: subflows/verify-download.yaml
+    env:
+      NAME: "Sample JSON Data"
+      FILE_ID: "3"
+      FILE: "sample-data\\.json"
+      SIZE: "698 B"

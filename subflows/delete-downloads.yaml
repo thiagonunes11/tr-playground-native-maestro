@@ -1,0 +1,30 @@
+appId: com.thiagonunes11.trplayground
+# deletes every file listed under "Downloaded Files" through the app UI (also removes it from the device)
+---
+- repeat:
+    while:
+      visible: "OK"
+    commands:
+      - tapOn: "OK"
+- repeat:
+    times: 3
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: "delete-downloaded-file-.*"
+          commands:
+            - scrollUntilVisible:
+                element:
+                  id: "delete-downloaded-file-.*"
+                timeout: 5000
+                optional: true
+      - runFlow:
+          when:
+            visible:
+              id: "delete-downloaded-file-.*"
+          commands:
+            - tapOn:
+                id: "delete-downloaded-file-.*"
+            - assertVisible: "Deleted"
+            - tapOn: "OK"

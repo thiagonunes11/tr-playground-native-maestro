@@ -1,0 +1,13 @@
+appId: com.thiagonunes11.trplayground
+# env: NAME, FILE_ID, FILE (regex), SIZE
+---
+- scrollUntilVisible:
+    element:
+      id: "view-downloaded-file-${FILE_ID}"
+    centerElement: true
+- assertVisible:
+    id: "downloaded-file-size-${FILE_ID}"
+    text: "${SIZE}"
+- tapOn: "View ${NAME}"
+- assertVisible: "File saved at: content://.*primary%3ADocuments%2F${FILE}"
+- tapOn: "OK"
