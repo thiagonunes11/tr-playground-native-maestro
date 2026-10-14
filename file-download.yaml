@@ -7,7 +7,6 @@ onFlowComplete:
     clearState: true
 - scrollUntilVisible:
     element: "File Download"
-    centerElement: true
 - tapOn: "File Download"
 
 # folder picker (OPEN_DOCUMENT_TREE) — storage root is blocked on Android 11+
