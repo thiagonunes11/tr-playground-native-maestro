@@ -1,0 +1,65 @@
+name: Maestro E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      app_tag:
+        description: Release tag of the app in thiagonunes11/tr-playground-native
+        required: false
+
+env:
+  APP_REPO: thiagonunes11/tr-playground-native
+  APP_TAG: ${{ inputs.app_tag || '0.7.6' }}
+  MAESTRO_VERSION: 2.10.0
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Download app
+        run: gh release download "$APP_TAG" -R "$APP_REPO" --pattern '*.apk' --output app.apk
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Run flows on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          disable-animations: true
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: .github/scripts/run-e2e.sh
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-results
+          path: |
+            report.xml
+            ~/.maestro/tests/
+          if-no-files-found: ignore

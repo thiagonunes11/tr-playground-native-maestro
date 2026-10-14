@@ -43,6 +43,10 @@ maestro test file-download.yaml
 
 Close Maestro Studio before running from the CLI — both compete for the device driver.
 
+## CI
+
+`.github/workflows/e2e.yml` runs every flow on an Android 14 emulator (Pixel 7 profile) on each push to `main`, on pull requests and on demand. The APK is downloaded from the [`tr-playground-native` releases](https://github.com/thiagonunes11/tr-playground-native/releases); to test another build, run the workflow manually and set `app_tag`. The JUnit report and Maestro debug output are uploaded as the `maestro-results` artifact.
+
 ## Notes
 
 - `file-download.yaml` deletes the downloaded files in `onFlowComplete`, even when the flow fails. Files left behind by an interrupted run make the app save `name (1).ext`, and the destination check fails; in that case run `adb shell rm /sdcard/Documents/sample-*`.
